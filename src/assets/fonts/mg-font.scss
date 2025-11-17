@@ -1,0 +1,22 @@
+@font-face {
+  font-family: "mg-font";
+  src: url('mg-font.eot?t=1763367577243'); /* IE9*/
+  src: url('mg-font.eot?t=1763367577243#iefix') format('embedded-opentype') /* IE6-IE8 */,
+  url('mg-font.woff2?t=1763367577243') format('woff2'),
+  url('mg-font.woff?t=1763367577243') format('woff'),
+  url('mg-font.ttf?t=1763367577243') format('truetype'),
+  url('mg-font.svg?t=1763367577243') format('svg');
+}
+
+[class^="fe-icon-"], [class*=" fe-icon-"] {
+  font-family: 'mg-font' !important;font-size: 14px;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+.fe-icon-div-14::before { content: "\ea01"; }
+
+
+$fe-icon-div-14: '\ea01';
