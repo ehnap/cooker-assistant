@@ -25,7 +25,7 @@
           <h3>过敏原过滤</h3>
         </div>
         <div class="select-container">
-          <el-select v-model="allergens" placeholder="选择过敏原" clearable>
+          <el-select v-model="allergens" placeholder="选择过敏原" clearable multiple>
             <el-option
               v-for="allergen in allergenOptions"
               :key="allergen.value"
@@ -87,6 +87,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useMenuStore } from "@/stores/menu";
+import { ElMessage } from "element-plus";
+
+const menuStore = useMenuStore();
 
 // 响应式数据
 const nutritionBalance = ref(true);
@@ -112,8 +116,8 @@ const dietPreferenceOptions = ref([
 ]);
 
 // 格式化滑块提示文本
-const formatPriorityTooltip = (value) => {
-  const priorityLabels = {
+const formatPriorityTooltip = (value: number) => {
+  const priorityLabels: Record<number, string> = {
     1: "低",
     2: "中",
     3: "高"
@@ -123,13 +127,25 @@ const formatPriorityTooltip = (value) => {
 
 // 生成菜单方法
 const generateMenu = () => {
-  console.log("生成菜单参数:", {
+  const settings = {
     nutritionBalance: nutritionBalance.value,
     allergens: allergens.value,
     dietPreference: dietPreference.value,
     seasonalPriority: seasonalPriority.value,
-  });
-  // 这里可以添加实际的生成逻辑
+  };
+
+  try {
+    // 先清空旧菜单，确保数据结构正确
+    menuStore.clearWeekMenu();
+
+    // 调用 store 生成菜单
+    menuStore.generateWeekMenu(settings);
+
+    ElMessage.success("周菜单生成成功！");
+  } catch (error) {
+    console.error("生成菜单失败:", error);
+    ElMessage.error("生成菜单失败，请检查设置后重试");
+  }
 };
 </script>
 

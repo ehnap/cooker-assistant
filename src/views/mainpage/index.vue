@@ -10,7 +10,10 @@
           <router-view v-if="$route.name !== 'smartmenu'" class="main-content" />
           <template v-else>
             <foodlist class="food-list-section" />
-            <weekmenu class="week-menu-section" />
+            <weekmenu
+              class="week-menu-section"
+              @showDishDetail="handleShowDishDetail"
+            />
           </template>
         </div>
       </main>
@@ -18,16 +21,34 @@
       <Footer class="app-footer" />
     </div>
 
+    <!-- 菜品详情弹窗 -->
+    <DishDetailDialog
+      v-model="dishDetailVisible"
+      :dish="selectedDish"
+    />
+
     <div class="popper-container"></div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import Foodlist from "./components/foodlist.vue";
 import Footer from "./components/footer.vue";
 import Functionbar from "./components/functionbar.vue";
 import Navbar from "./components/navbar.vue";
 import Weekmenu from "./components/weekmenu.vue";
+import DishDetailDialog from "./components/DishDetailDialog.vue";
+
+// 菜品详情弹窗控制
+const dishDetailVisible = ref(false);
+const selectedDish = ref(null);
+
+// 处理显示菜品详情
+const handleShowDishDetail = (dish) => {
+  selectedDish.value = dish;
+  dishDetailVisible.value = true;
+};
 </script>
 
 <style lang="scss" scoped>

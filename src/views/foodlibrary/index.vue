@@ -1,12 +1,17 @@
 <template>
-  <div class="food-library">
-    <div class="header-section">
-      <h2 class="title">食品库</h2>
-      <el-button type="primary" class="add-button" @click="showAddIngredientDialog">
-        <i class="el-icon-plus"></i>
-        添加食材
-      </el-button>
-    </div>
+  <div class="food-library-container">
+    <div class="app-wrapper">
+      <navbar class="app-header" />
+
+      <div class="main-content">
+        <div class="food-library">
+          <div class="header-section">
+            <h2 class="title">食品库</h2>
+            <el-button type="primary" class="add-button" @click="showAddIngredientDialog">
+              <i class="el-icon-plus"></i>
+              添加食材
+            </el-button>
+          </div>
 
     <div class="search-section">
       <div class="search-container">
@@ -169,6 +174,9 @@
         </div>
       </template>
     </el-dialog>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -176,6 +184,7 @@
 import { ref, reactive, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Search, Plus } from '@element-plus/icons-vue';
+import Navbar from '../mainpage/components/navbar.vue';
 
 // 所有食材数据
 const allIngredientList = ref([
@@ -491,6 +500,39 @@ const submitIngredientForm = () => {
 </script>
 
 <style lang="scss" scoped>
+.food-library-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f9fafb;
+
+  .app-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    .app-header {
+      flex: 0 0 60px;
+      box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+      background: linear-gradient(transparent, #ffffff);
+      z-index: 10;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 32px 24px;
+      background: #f9fafb;
+      min-height: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+  }
+}
+
 .food-library {
   position: relative;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);

@@ -2,8 +2,8 @@
 
 ## 项目概述
 
-**项目名称**: Cooker Assistant (每日菜单管理系统)  
-**项目类型**: Web 应用  
+**项目名称**: Cooker Assistant (智能菜单规划系统)
+**项目类型**: Web 应用
 **技术栈**: Vue 3 + TypeScript + Element Plus + Vite + Pinia
 
 ## 技术架构
@@ -25,27 +25,30 @@
 
 ## 功能模块
 
-### 1. 菜品管理模块 (foodlist.vue)
+### 1. 智能菜单规划主页
+主页集成了多个核心功能模块，提供一体化的菜单规划体验：
+
+#### 1.1 菜品管理模块 (foodlist.vue)
 - 菜品展示网格布局
 - 搜索功能（支持名称、食材、烹饪方式）
 - 分类筛选
 - 菜品卡片（包含图片、名称、分类、热量、季节性标签）
 - 添加菜品功能
 
-### 2. 智能规划设置模块 (functionbar.vue)
+#### 1.2 智能规划设置模块 (functionbar.vue)
 - 营养均衡开关
 - 过敏原过滤（花生、牛奶、鸡蛋、海鲜、坚果等）
 - 饮食偏好选择（无限制、素食、纯素、低脂、低碳水）
 - 季节性食材优先级调整（低、中、高）
 - 一键生成周菜单功能
 
-### 3. 周菜单管理模块 (weekmenu.vue)
+#### 1.3 周菜单管理模块 (weekmenu.vue)
 - 周度菜单表格（周一至周日 × 早餐/午餐/晚餐）
 - 点击添加菜品功能
 - 保存草稿
 - 发布正式版
 
-### 4. 营养统计模块 (footer.vue)
+#### 1.4 营养统计模块 (footer.vue)
 - 总热量统计
 - 营养成分分析（蛋白质、碳水、脂肪）
 - 菜单导出功能
@@ -66,14 +69,22 @@
    - 底部营养统计区域
 
 ### 路由结构
-目前只配置了主页路由：
-```ts
-{
-  path: "/",
-  name: "main",
-  component: () => import("../views/mainpage/index.vue")
-}
-```
+项目包含三个主要路由页面：
+
+1. **智能菜单规划** (主页)
+   - 路径: /
+   - 名称: smartmenu
+   - 组件: ../views/mainpage/index.vue
+
+2. **菜品库管理**
+   - 路径: /foodlibrary
+   - 名称: foodlibrary
+   - 组件: ../views/foodlibrary/index.vue
+
+3. **每周菜单管理**
+   - 路径: /weeklymenu
+   - 名称: weeklymenu
+   - 组件: ../views/weeklymenu/index.vue
 
 ## 设计特点
 
