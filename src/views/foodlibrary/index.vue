@@ -1,10 +1,10 @@
 <template>
-  <div class="dish-library">
+  <div class="food-library">
     <div class="header-section">
-      <h2 class="title">菜品库</h2>
-      <el-button type="primary" class="add-button" @click="showAddDishDialog">
+      <h2 class="title">食品库</h2>
+      <el-button type="primary" class="add-button" @click="showAddIngredientDialog">
         <i class="el-icon-plus"></i>
-        添加菜品
+        添加食材
       </el-button>
     </div>
 
@@ -12,9 +12,9 @@
       <div class="search-container">
         <el-input
           v-model="searchText"
-          placeholder="搜索菜品名称、食材或烹饪方式"
+          placeholder="搜索食材名称"
           class="search-input"
-          @input="filterDishes"
+          @input="filterIngredients"
         >
           <template #prefix>
             <el-icon class="search-icon"><Search /></el-icon>
@@ -24,33 +24,35 @@
           v-model="selectedCategory"
           placeholder="全部"
           class="category-select"
-          @change="filterDishes"
+          @change="filterIngredients"
         >
           <el-option label="全部" value="all" />
-          <el-option label="荤菜" value="荤菜" />
-          <el-option label="素菜" value="素菜" />
-          <el-option label="汤类" value="汤类" />
+          <el-option label="肉类" value="肉类" />
+          <el-option label="蔬菜" value="蔬菜" />
+          <el-option label="水果" value="水果" />
+          <el-option label="海鲜" value="海鲜" />
+          <el-option label="豆制品" value="豆制品" />
+          <el-option label="调味品" value="调味品" />
           <el-option label="主食" value="主食" />
-          <el-option label="甜点" value="甜点" />
         </el-select>
       </div>
     </div>
 
-    <div class="dish-grid">
-      <div v-for="dish in dishList" :key="dish.id" class="dish-card">
-        <div class="dish-image-container">
-          <img :src="dish.image" :alt="dish.name" class="dish-image" />
-          <div class="dish-overlay">
-            <span class="dish-name">{{ dish.name }}</span>
+    <div class="ingredient-grid">
+      <div v-for="ingredient in ingredientList" :key="ingredient.id" class="ingredient-card">
+        <div class="ingredient-image-container">
+          <img :src="ingredient.image" :alt="ingredient.name" class="ingredient-image" />
+          <div class="ingredient-overlay">
+            <span class="ingredient-name">{{ ingredient.name }}</span>
           </div>
         </div>
 
-        <div class="dish-info">
-          <div class="dish-meta">
-            <span class="dish-category">{{ dish.category }}</span>
-            <div class="dish-tags">
+        <div class="ingredient-info">
+          <div class="ingredient-meta">
+            <span class="ingredient-category">{{ ingredient.category }}</span>
+            <div class="ingredient-tags">
               <el-tag
-                v-if="dish.isSeasonal"
+                v-if="ingredient.isSeasonal"
                 size="small"
                 type="success"
                 class="seasonal-tag"
@@ -58,57 +60,76 @@
                 当季
               </el-tag>
               <el-tag size="small" type="primary" class="calorie-tag">
-                {{ dish.calories }}卡
+                {{ ingredient.calories }}卡/100g
               </el-tag>
             </div>
+          </div>
+          <div class="ingredient-nutrients">
+            <span class="nutrient-item">蛋白质: {{ ingredient.protein }}g</span>
+            <span class="nutrient-item">脂肪: {{ ingredient.fat }}g</span>
+            <span class="nutrient-item">碳水: {{ ingredient.carbs }}g</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 添加菜品对话框 -->
+    <!-- 添加食材对话框 -->
     <el-dialog
-      v-model="addDishDialogVisible"
-      title="添加菜品"
+      v-model="addIngredientDialogVisible"
+      title="添加食材"
       width="600px"
       :before-close="handleCloseDialog"
     >
       <el-form
-        ref="dishFormRef"
-        :model="dishForm"
-        :rules="dishFormRules"
+        ref="ingredientFormRef"
+        :model="ingredientForm"
+        :rules="ingredientFormRules"
         label-width="80px"
         label-position="left"
-        class="dish-form"
+        class="ingredient-form"
       >
-        <el-form-item label="菜品名称" prop="name">
-          <el-input v-model="dishForm.name" placeholder="请输入菜品名称" />
+        <el-form-item label="食材名称" prop="name">
+          <el-input v-model="ingredientForm.name" placeholder="请输入食材名称" />
         </el-form-item>
         
-        <el-form-item label="菜品分类" prop="category">
-          <el-select v-model="dishForm.category" placeholder="请选择菜品分类">
-            <el-option label="荤菜" value="荤菜" />
-            <el-option label="素菜" value="素菜" />
-            <el-option label="汤类" value="汤类" />
+        <el-form-item label="食材分类" prop="category">
+          <el-select v-model="ingredientForm.category" placeholder="请选择食材分类">
+            <el-option label="肉类" value="肉类" />
+            <el-option label="蔬菜" value="蔬菜" />
+            <el-option label="水果" value="水果" />
+            <el-option label="海鲜" value="海鲜" />
+            <el-option label="豆制品" value="豆制品" />
+            <el-option label="调味品" value="调味品" />
             <el-option label="主食" value="主食" />
-            <el-option label="甜点" value="甜点" />
           </el-select>
         </el-form-item>
         
-        <el-form-item label="热量(卡)" prop="calories">
-          <el-input-number v-model="dishForm.calories" :min="0" :max="1000" />
+        <el-form-item label="热量(卡/100g)" prop="calories">
+          <el-input-number v-model="ingredientForm.calories" :min="0" :max="1000" />
+        </el-form-item>
+        
+        <el-form-item label="蛋白质(g/100g)" prop="protein">
+          <el-input-number v-model="ingredientForm.protein" :min="0" :max="100" />
+        </el-form-item>
+        
+        <el-form-item label="脂肪(g/100g)" prop="fat">
+          <el-input-number v-model="ingredientForm.fat" :min="0" :max="100" />
+        </el-form-item>
+        
+        <el-form-item label="碳水(g/100g)" prop="carbs">
+          <el-input-number v-model="ingredientForm.carbs" :min="0" :max="100" />
         </el-form-item>
         
         <el-form-item label="时令月份" prop="seasonalMonths">
           <div class="seasonal-months-container">
             <div class="months-display">
-              <span v-if="dishForm.seasonalMonths && dishForm.seasonalMonths.length > 0">
-                {{ formatSeasonalMonths(dishForm.seasonalMonths) }}
+              <span v-if="ingredientForm.seasonalMonths && ingredientForm.seasonalMonths.length > 0">
+                {{ formatSeasonalMonths(ingredientForm.seasonalMonths) }}
               </span>
               <span v-else class="placeholder-text">请选择时令月份</span>
             </div>
             <el-slider
-              v-model="dishForm.seasonalMonths"
+              v-model="ingredientForm.seasonalMonths"
               range
               :min="1"
               :max="12"
@@ -120,17 +141,17 @@
           </div>
         </el-form-item>
         
-        <el-form-item label="菜品图片" prop="image">
+        <el-form-item label="食材图片" prop="image">
           <div class="image-upload-container">
             <el-upload
-              class="dish-uploader"
+              class="ingredient-uploader"
               action="#"
               :show-file-list="false"
               :before-upload="beforeImageUpload"
               :http-request="handleImageUpload"
             >
               <div class="upload-container">
-                <img v-if="dishForm.image" :src="dishForm.image" class="dish-image-preview" />
+                <img v-if="ingredientForm.image" :src="ingredientForm.image" class="ingredient-image-preview" />
                 <div v-else class="upload-placeholder">
                   <el-icon class="upload-icon"><Plus /></el-icon>
                 </div>
@@ -144,7 +165,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="handleCloseDialog">取消</el-button>
-          <el-button type="primary" @click="submitDishForm">确定</el-button>
+          <el-button type="primary" @click="submitIngredientForm">确定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -152,163 +173,238 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Search, Plus } from '@element-plus/icons-vue';
 
-const searchText = ref("");
-const selectedCategory = ref("all");
-
-// 原始菜品数据
-const allDishList = ref([
+// 所有食材数据
+const allIngredientList = ref([
   {
     id: 1,
-    name: "番茄炒蛋",
-    category: "荤菜",
-    calories: "280",
-    isSeasonal: true,
-    image:
-      "https://ux.srdcloud.cn/file_proxy/app-mastergo-default/165346298763006/165346298763007/2cdec50a3c2cb774ba42088ace7d78bc.png",
+    name: "鸡肉",
+    category: "肉类",
+    calories: "165",
+    protein: "31",
+    fat: "3.6",
+    carbs: "0",
+    isSeasonal: false,
+    image: "https://picsum.photos/seed/chicken/300/300.jpg",
   },
   {
     id: 2,
-    name: "清蒸鲈鱼",
-    category: "荤菜",
-    calories: "220",
-    isSeasonal: true,
-    image:
-      "https://ux.srdcloud.cn/file_proxy/app-mastergo-default/165346298763006/165346298763007/8f69a1a59a0da534c6b14191a6b3fc18.png",
+    name: "猪肉",
+    category: "肉类",
+    calories: "242",
+    protein: "27",
+    fat: "14",
+    carbs: "0",
+    isSeasonal: false,
+    image: "https://picsum.photos/seed/pork/300/300.jpg",
   },
   {
     id: 3,
-    name: "蒜蓉西兰花",
-    category: "素菜",
-    calories: "120",
-    isSeasonal: true,
-    image:
-      "https://ux.srdcloud.cn/file_proxy/app-mastergo-default/165346298763006/165346298763007/c00cbdf6638cc2bd9b19f4bcc5cc120a.png",
+    name: "牛肉",
+    category: "肉类",
+    calories: "250",
+    protein: "26",
+    fat: "15",
+    carbs: "0",
+    isSeasonal: false,
+    image: "https://picsum.photos/seed/beef/300/300.jpg",
   },
   {
     id: 4,
-    name: "紫菜蛋花汤",
-    category: "汤类",
-    calories: "80",
-    isSeasonal: false,
-    image:
-      "https://ux.srdcloud.cn/file_proxy/app-mastergo-default/165346298763006/165346298763007/2300f84b04badd4a156be9ce8be2d271.png",
+    name: "西兰花",
+    category: "蔬菜",
+    calories: "34",
+    protein: "2.8",
+    fat: "0.4",
+    carbs: "7",
+    isSeasonal: true,
+    image: "https://picsum.photos/seed/broccoli/300/300.jpg",
   },
   {
     id: 5,
-    name: "红烧排骨",
-    category: "荤菜",
-    calories: "350",
-    isSeasonal: false,
-    image:
-      "https://ux.srdcloud.cn/file_proxy/app-mastergo-default/165346298763006/165346298763007/519634b7d1484d08b9608a289eb7b9bc.png",
+    name: "白菜",
+    category: "蔬菜",
+    calories: "17",
+    protein: "1.5",
+    fat: "0.2",
+    carbs: "3.2",
+    isSeasonal: true,
+    image: "https://picsum.photos/seed/cabbage/300/300.jpg",
   },
   {
     id: 6,
-    name: "清炒菠菜",
-    category: "素菜",
-    calories: "90",
+    name: "菠菜",
+    category: "蔬菜",
+    calories: "23",
+    protein: "2.9",
+    fat: "0.4",
+    carbs: "3.6",
     isSeasonal: true,
-    image:
-      "https://ux.srdcloud.cn/file_proxy/app-mastergo-default/165346298763006/165346298763007/ecf053e6cbb071d2f27a0ff08145ed01.png",
+    image: "https://picsum.photos/seed/spinach/300/300.jpg",
   },
   {
     id: 7,
-    name: "南瓜粥",
-    category: "主食",
-    calories: "150",
+    name: "苹果",
+    category: "水果",
+    calories: "52",
+    protein: "0.3",
+    fat: "0.2",
+    carbs: "14",
     isSeasonal: true,
-    image:
-      "https://ux.srdcloud.cn/file_proxy/app-mastergo-default/165346298763006/165346298763007/18e4bff672fb2b2f33f2afee0ff95d2b.png",
+    image: "https://picsum.photos/seed/apple/300/300.jpg",
   },
   {
     id: 8,
-    name: "水果沙拉",
-    category: "甜点",
-    calories: "180",
-    isSeasonal: true,
-    image:
-      "https://ux.srdcloud.cn/file_proxy/app-mastergo-default/165346298763006/165346298763007/8843f5f841753d805043638c9b4985a5.png",
+    name: "香蕉",
+    category: "水果",
+    calories: "89",
+    protein: "1.1",
+    fat: "0.3",
+    carbs: "23",
+    isSeasonal: false,
+    image: "https://picsum.photos/seed/banana/300/300.jpg",
+  },
+  {
+    id: 9,
+    name: "虾",
+    category: "海鲜",
+    calories: "85",
+    protein: "20",
+    fat: "0.5",
+    carbs: "0",
+    isSeasonal: false,
+    image: "https://picsum.photos/seed/shrimp/300/300.jpg",
+  },
+  {
+    id: 10,
+    name: "豆腐",
+    category: "豆制品",
+    calories: "76",
+    protein: "8",
+    fat: "4.8",
+    carbs: "1.9",
+    isSeasonal: false,
+    image: "https://picsum.photos/seed/tofu/300/300.jpg",
   },
 ]);
 
-// 过滤后的菜品列表
-const dishList = ref(allDishList.value);
+// 过滤后的食材列表
+const ingredientList = ref(allIngredientList.value);
 
-// 过滤菜品的方法
-const filterDishes = () => {
-  dishList.value = allDishList.value.filter(dish => {
+// 搜索和过滤
+const searchText = ref('');
+const selectedCategory = ref('all');
+
+// 过滤食材的方法
+const filterIngredients = () => {
+  ingredientList.value = allIngredientList.value.filter(ingredient => {
     // 分类过滤
-    const categoryMatch = selectedCategory.value === "all" || dish.category === selectedCategory.value;
+    const categoryMatch = selectedCategory.value === "all" || ingredient.category === selectedCategory.value;
     
     // 搜索文本过滤
     const searchMatch = !searchText.value || 
-      dish.name.toLowerCase().includes(searchText.value.toLowerCase());
+      ingredient.name.toLowerCase().includes(searchText.value.toLowerCase());
     
     return categoryMatch && searchMatch;
   });
 };
 
-// 添加菜品对话框相关
-const addDishDialogVisible = ref(false);
-const dishFormRef = ref(null);
+// 添加食材对话框相关
+const addIngredientDialogVisible = ref(false);
+const ingredientFormRef = ref(null);
 
-// 菜品表单数据
-const dishForm = reactive({
+// 食材表单数据
+const ingredientForm = reactive({
   name: '',
   category: '',
   calories: 0,
+  protein: 0,
+  fat: 0,
+  carbs: 0,
   seasonalMonths: [], // 改为数组，存储开始和结束月份
   image: ''
 });
 
 // 表单验证规则
-const dishFormRules = {
+const ingredientFormRules = {
   name: [
-    { required: true, message: '请输入菜品名称', trigger: 'blur' },
+    { required: true, message: '请输入食材名称', trigger: 'blur' },
     { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
   ],
   category: [
-    { required: true, message: '请选择菜品分类', trigger: 'change' }
+    { required: true, message: '请选择食材分类', trigger: 'change' }
   ],
   calories: [
     { required: true, message: '请输入热量值', trigger: 'blur' },
     { type: 'number', min: 0, max: 1000, message: '热量值应在 0-1000 之间', trigger: 'blur' }
+  ],
+  protein: [
+    { required: true, message: '请输入蛋白质含量', trigger: 'blur' },
+    { type: 'number', min: 0, max: 100, message: '蛋白质含量应在 0-100 之间', trigger: 'blur' }
+  ],
+  fat: [
+    { required: true, message: '请输入脂肪含量', trigger: 'blur' },
+    { type: 'number', min: 0, max: 100, message: '脂肪含量应在 0-100 之间', trigger: 'blur' }
+  ],
+  carbs: [
+    { required: true, message: '请输入碳水化合物含量', trigger: 'blur' },
+    { type: 'number', min: 0, max: 100, message: '碳水化合物含量应在 0-100 之间', trigger: 'blur' }
   ],
   seasonalMonths: [
     { required: true, message: '请选择时令月份', trigger: 'change' },
     { type: 'array', min: 2, max: 2, message: '请选择月份范围', trigger: 'change' }
   ],
   image: [
-    { required: true, message: '请上传菜品图片', trigger: 'change' }
+    { required: true, message: '请上传食材图片', trigger: 'change' }
   ]
 };
 
-// 显示添加菜品对话框
-const showAddDishDialog = () => {
-  addDishDialogVisible.value = true;
+// 月份标记
+const monthMarks = reactive({
+  1: '1月',
+  3: '3月',
+  6: '6月',
+  9: '9月',
+  12: '12月'
+});
+
+// 显示添加食材对话框
+const showAddIngredientDialog = () => {
+  addIngredientDialogVisible.value = true;
   // 重置表单
-  Object.assign(dishForm, {
+  Object.assign(ingredientForm, {
     name: '',
     category: '',
     calories: 0,
+    protein: 0,
+    fat: 0,
+    carbs: 0,
     seasonalMonths: [3, 9], // 默认选择3月到9月
     image: ''
   });
+  if (ingredientFormRef.value) {
+    ingredientFormRef.value.clearValidate();
+  }
 };
 
 // 关闭对话框
 const handleCloseDialog = () => {
-  addDishDialogVisible.value = false;
-  if (dishFormRef.value) {
-    dishFormRef.value.resetFields();
-  }
+  addIngredientDialogVisible.value = false;
+  // 重置表单
+  Object.assign(ingredientForm, {
+    name: '',
+    category: '',
+    calories: 0,
+    protein: 0,
+    fat: 0,
+    carbs: 0,
+    seasonalMonths: [],
+    image: ''
+  });
 };
-
-
 
 // 格式化月份提示
 const formatMonthTooltip = (value) => {
@@ -346,32 +442,45 @@ const beforeImageUpload = (file) => {
 const handleImageUpload = () => {
   // 模拟上传成功，返回一个随机图片URL
   const mockImageUrl = `https://picsum.photos/seed/${Date.now()}/300/300.jpg`;
-  dishForm.image = mockImageUrl;
+  ingredientForm.image = mockImageUrl;
   ElMessage.success('图片上传成功');
 };
 
-// 提交菜品表单
-const submitDishForm = () => {
-  if (!dishFormRef.value) return;
+const handleImageChange = (file) => {
+  // 这里应该上传图片到服务器并获取URL
+  // 现在只是使用本地URL作为示例
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    ingredientForm.image = e.target.result;
+  };
+  reader.readAsDataURL(file.raw);
+};
+
+// 提交食材表单
+const submitIngredientForm = () => {
+  if (!ingredientFormRef.value) return;
   
-  dishFormRef.value.validate((valid) => {
+  ingredientFormRef.value.validate((valid) => {
     if (valid) {
-      // 创建新菜品对象
-      const newDish = {
+      // 创建新食材对象
+      const newIngredient = {
         id: Date.now(), // 使用时间戳作为临时ID
-        name: dishForm.name,
-        category: dishForm.category,
-        calories: dishForm.calories.toString(),
-        seasonalMonths: [...dishForm.seasonalMonths], // 复制月份数组
-        isSeasonal: dishForm.seasonalMonths.length === 2, // 根据是否选择了月份判断是否当季
-        image: dishForm.image
+        name: ingredientForm.name,
+        category: ingredientForm.category,
+        calories: ingredientForm.calories.toString(),
+        protein: ingredientForm.protein.toString(),
+        fat: ingredientForm.fat.toString(),
+        carbs: ingredientForm.carbs.toString(),
+        seasonalMonths: [...ingredientForm.seasonalMonths], // 复制月份数组
+        isSeasonal: ingredientForm.seasonalMonths.length === 2, // 根据是否选择了月份判断是否当季
+        image: ingredientForm.image
       };
       
-      // 添加到菜品列表
-      allDishList.value.unshift(newDish);
-      dishList.value = [...allDishList.value]; // 更新显示列表
+      // 添加到食材列表
+      allIngredientList.value.unshift(newIngredient);
+      ingredientList.value = [...allIngredientList.value]; // 更新显示列表
       
-      ElMessage.success('菜品添加成功!');
+      ElMessage.success('食材添加成功!');
       handleCloseDialog();
     } else {
       ElMessage.error('请正确填写表单信息!');
@@ -382,7 +491,7 @@ const submitDishForm = () => {
 </script>
 
 <style lang="scss" scoped>
-.dish-library {
+.food-library {
   position: relative;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
   border-radius: 8px;
@@ -538,42 +647,56 @@ const submitDishForm = () => {
     }
   }
 
-  .dish-grid {
+  .ingredient-grid {
     width: 100%;
     background: rgba(0, 0, 0, 0);
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     overflow: visible;
+    
+    // 响应式布局
+    @media (max-width: 1400px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
 
-      .dish-card {
+      .ingredient-card {
         width: 100%;
         border-radius: 8px;
         overflow: hidden;
         background: rgba(0, 0, 0, 0);
         border: 1px solid #e5e7eb;
         transition: transform 0.2s ease;
+        min-height: 280px;
 
         &:hover {
           transform: translateY(-2px);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .dish-image-container {
+        .ingredient-image-container {
           position: relative;
           width: 100%;
           aspect-ratio: 1;
           overflow: hidden;
           background: rgba(0, 0, 0, 0);
 
-          .dish-image {
+          .ingredient-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
             background-size: cover;
           }
 
-          .dish-overlay {
+          .ingredient-overlay {
             position: absolute;
             bottom: 0;
             left: 0;
@@ -585,7 +708,7 @@ const submitDishForm = () => {
               rgba(0, 0, 0, 0) 100%
             );
 
-            .dish-name {
+            .ingredient-name {
               color: #ffffff;
               font-family: "Roboto";
               font-size: 14px;
@@ -595,16 +718,17 @@ const submitDishForm = () => {
           }
         }
 
-        .dish-info {
+        .ingredient-info {
           padding: 12px;
           background: rgba(0, 0, 0, 0);
 
-          .dish-meta {
+          .ingredient-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 8px;
 
-            .dish-category {
+            .ingredient-category {
               color: #6b7280;
               font-family: "Roboto";
               font-size: 12px;
@@ -612,7 +736,7 @@ const submitDishForm = () => {
               font-weight: 400;
             }
 
-            .dish-tags {
+            .ingredient-tags {
               display: flex;
               gap: 4px;
 
@@ -639,12 +763,27 @@ const submitDishForm = () => {
               }
             }
           }
+
+          .ingredient-nutrients {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+
+            .nutrient-item {
+              font-size: 11px;
+              color: #6b7280;
+              background: #f3f4f6;
+              padding: 2px 6px;
+              border-radius: 4px;
+            }
+          }
         }
       }
   }
 }
 
-// 添加菜品对话框样式
+// 添加食材对话框样式
 :deep(.el-dialog) {
   border-radius: 8px;
   
@@ -666,7 +805,34 @@ const submitDishForm = () => {
   .el-dialog__footer {
     padding: 15px 20px;
     border-top: 1px solid #f0f0f0;
-    text-align: right;
+  }
+}
+
+// 表单样式
+:deep(.ingredient-form) {
+  .el-form-item {
+    margin-bottom: 20px;
+    
+    .el-form-item__label {
+      font-weight: 500;
+      color: #374151;
+    }
+  }
+  
+  .el-input {
+    width: 100%;
+  }
+  
+  .el-select {
+    width: 100%;
+  }
+  
+  .el-input-number {
+    width: 100%;
+    
+    .el-input__inner {
+      text-align: left;
+    }
   }
 }
 
@@ -676,7 +842,7 @@ const submitDishForm = () => {
   align-items: flex-start;
 }
 
-.dish-uploader {
+.ingredient-uploader {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -717,7 +883,7 @@ const submitDishForm = () => {
     }
   }
   
-  .dish-image-preview {
+  .ingredient-image-preview {
     width: 100%;
     height: 100%;
     object-fit: cover;

@@ -11,6 +11,7 @@
           :key="index"
           class="menu-item"
           :class="`menu-item-${index}`"
+          @click="navigateToPage(menu)"
         >
           <span class="menu-text">{{ menu.text }}</span>
         </div>
@@ -26,13 +27,20 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
 import { ElButton } from "element-plus";
 
+const router = useRouter();
+
 const menuItems = [
-  { text: "智能菜单规划" },
-  { text: "食品库" },
-  { text: "每周菜单" },
+  { text: "智能菜单规划", route: "" },
+  { text: "食品库", route: "foodlibrary" },
+  { text: "每周菜单", route: "weeklymenu" },
 ];
+
+const navigateToPage = (menu) => {
+  router.push(`/${menu.route}`);
+};
 </script>
 
 <style lang="scss" scoped>

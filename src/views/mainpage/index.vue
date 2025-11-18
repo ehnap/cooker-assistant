@@ -4,11 +4,14 @@
       <navbar class="app-header" />
 
       <main class="app-main">
-        <functionbar class="sidebar" />
+        <functionbar v-if="$route.name === 'smartmenu'" class="sidebar" />
 
-        <div class="content-area">
-          <foodlist class="food-list-section" />
-          <weekmenu class="week-menu-section" />
+        <div class="content-area" :class="{ 'full-width-content': $route.name !== 'smartmenu' }">
+          <router-view v-if="$route.name !== 'smartmenu'" class="main-content" />
+          <template v-else>
+            <foodlist class="food-list-section" />
+            <weekmenu class="week-menu-section" />
+          </template>
         </div>
       </main>
 
@@ -55,7 +58,7 @@ import Weekmenu from "./components/weekmenu.vue";
     gap: 16px;
     padding: 32px 24px;
     min-height: 0;
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
     width: 100%;
   }
@@ -68,13 +71,18 @@ import Weekmenu from "./components/weekmenu.vue";
     background: linear-gradient(transparent, #ffffff);
   }
 
+  // 当没有侧边栏时，内容区域占满整个宽度
+  .full-width-content {
+    max-width: 1200px;
+  }
+
   .content-area {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 24px;
     min-width: 0;
-    max-width: 800px;
+    max-width: 1200px;
     align-items: stretch; /* 确保子元素拉伸对齐 */
   }
 
@@ -97,6 +105,11 @@ import Weekmenu from "./components/weekmenu.vue";
     padding: 24px;
     background: linear-gradient(transparent, #ffffff);
     width: 100%; /* 确保与菜品库同宽 */
+  }
+
+  .main-content {
+    width: 100%;
+    height: 100%;
   }
 
   .app-footer {
@@ -147,6 +160,10 @@ import Weekmenu from "./components/weekmenu.vue";
     .content-area {
       gap: 16px;
       width: 100%; /* 移动端确保宽度充满 */
+    }
+
+    .full-width-content {
+      max-width: 100%;
     }
     
     .food-list-section,
