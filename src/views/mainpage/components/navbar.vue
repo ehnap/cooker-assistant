@@ -29,10 +29,9 @@
 import { ElButton } from "element-plus";
 
 const menuItems = [
-  { text: "菜品管理" },
   { text: "智能菜单规划" },
-  { text: "本周菜单" },
-  { text: "历史菜单" },
+  { text: "食品库" },
+  { text: "每周菜单" },
 ];
 </script>
 
